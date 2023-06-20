@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         WebView browser = new WebView( this ) ;
         browser.getSettings().setJavaScriptEnabled( true ) ;
         browser.setWebChromeClient(new WebChromeClient() {});
-        browser.loadUrl( "file:///android_asset/checkoutv4.html" ) ;
+        //browser.loadUrl( "file:///android_asset/checkoutv4.html" ) ;
+        browser.loadUrl("https://jordandiaz1988.000webhostapp.com/checkoutv6.html");
         setContentView(browser) ;
         WebSettings ws = browser.getSettings() ;
         ws.setJavaScriptEnabled( true ) ;

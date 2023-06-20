@@ -6,14 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://checkout.culqi.com/js/v4"></script>
+    <script src="https://3ds.culqi.com" defer></script>
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.plugin.js" type="text/javascript"></script>-->
+    <script src="jquery.min.js"></script>
+
 </head>
 
 <body>
 
-<script type="text/javascript">
-    var json =  JSON.parse(Android.sendParamsCheckoutv4FromAndroid());
+<script  type="module" >
+    Culqi3DS.publicKey = "pk_test_90667d0a57d45c48";
+    var json =  "JSON.parse(Android.sendParamsCheckoutv4FromAndroid());"
 
 	Culqi.publicKey = 'pk_test_90667d0a57d45c48';
+
+
 
 
     Culqi.settings({
@@ -46,75 +54,188 @@
       }
     });
 
-    function culqi() {
-      console.log("todo el objeto da " + Culqi.order);
-      if (Culqi.token) {
-        let token = Culqi.token.id;
-        const message = `Se ha creado el objeto Token: ${token}. Recordar que hasta este punto solo se ha generado un token, no se ha realizado un cargo a ninguna tarjeta.`;
-        console.log('Jordan');
-        console.log('message ~> ', message);
-        var jsonData = {
-          "amount": "10000",
-          "currency_code": "PEN",
-          "email": "jordan.diaz3@culqi.com",
-          "source_id": token,
-          "capture": false
-        };
-        // alert(message);
-         // Realizar la llamada al servicio por POST
-         // Se recomienda no poner la llave sk directamente en el codigo fuente aqui se puso por temas de pruebas
-          fetch('https://api.culqi.com/v2/charges', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer sk_test_1573b0e8079863ff'
-            },
-            body: JSON.stringify(jsonData)
-          })
-          .then(response => {
-              if (response.ok) {
-                console.log("Llamado Exitoso");
-                window.AndroidInterfaceMessage.onCulqiMenssage();
-                return response.json(); // Devuelve la promesa con los datos de la respuesta
-              } else {
-                console.log("Llamado con error");
-                window.AndroidInterfaceMessageError.onCulqiMenssageError();
-                throw new Error('Error en la llamada al servicio por POST: ' + response.status + ' ' + response.statusText);
-              }
-          })
-          .then(data => {
-              // Aquí puedes acceder a los datos de la respuesta
-              console.log('Respuesta del endpoint:', data);
-            })
-          .catch(error => {
-            console.log('Error en la llamada al servicio por POST' + error);
-            // Aquí puedes manejar el error en la llamada al servicio
-          });
-        //history.back();
-        Culqi.close();
-        window.AndroidInterface.onCulqiClose();
-      } else if (Culqi.order) {
-        let order = Culqi.order;
 
-        if (Culqi.order.cuotealo != null) {
+    //3DS
+     Culqi3DS.options = {
+        showModal: true,
+        showLoading: true,
+        showIcon: true,
+        closeModalAction: () => window.location.reload(true),
+        // style: {
+        //     btnColor: "red",
+        //     btnTextColor: "yellow",
+        // },
+    };
+
+    const device_aux = Promise.resolve(Culqi3DS.generateDevice());
+        device_aux.then(value => {
+                console.log(value);
+                window.device = value;
+                Culqi.open();
+            });
+
+
+
+    function culqi() {
+    console.log("Entro a 3DS");
+          if (Culqi.token) {
+            Culqi.close();
+            console.log("El token es: "+ Culqi.token.id);
+            const tokenId = Culqi.token.id;
+            console.log("El token del checkout es: "+tokenId);
+            console.log(Culqi.token.email);
+            const email = Culqi.token.email;
+            generateChargeImpl(tokenId, email);
+
+          } else {
+            alert(Culqi.error.user_message);
+            $('#response-panel').show();
+            $('#response').html(Culqi.error.merchant_message);
+            $('body').waitMe('hide');
+          }
+    };
+    window.culqi = culqi;
+
+    function generateChargeImpl (tokenId,  email, parameters3DS = null) {
+    //const deviceId = await Culqi3DS.generateDevice();
+    //console.log("JORDANNNNNNN " +deviceId);
+    console.log("Llego a generateChargeImpl");
+      var data_fraud = {
+       phone_number: "961778965",
+       device_finger_print_id: window.device
+      }
+      var data = {
+        amount : "10000",
+        currency_code : "PEN",
+        email : "jordan.diaz3@culqi.com",
+        source_id : Culqi.token.id,
+        antifraud_details : data_fraud
+        };
+        console.log("json");
+        console.log(data);
+
+        //Llamado al endpoint de culqi/generateCharge
+
+        $.ajax({
+                url: "https://api.culqi.com/v2/charges",
+                data: JSON.stringify(data),
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {
+                    "Authorization": "Bearer sk_test_1573b0e8079863ff"
+                },
+                success: function (data, textStatus, xhr) {
+                    console.log('data:::', data);
+                    if (data.action_code == 'REVIEW') {
+                        Culqi3DS.settings = {
+                            charge: {
+                                totalAmount: "10000",
+                                returnUrl: "https://jordandiaz1988.000webhostapp.com/checkoutv6.html"
+                            },
+                            card: {
+                                email: Culqi.token.email,
+                            }
+                        };
+                        Culqi3DS.initAuthentication(Culqi.token.id);
+                    } else {
+                        console.log("Se Realizo el Cargo correctamente sin 3DS");
+                    }
+                },
+                error: function (error, textStatus, xhr) {
+                    console.log('error:::', error);
+                    window.AndroidInterface.onCulqiClose();
+                    Culqi.close();
+                }
+            });
+
+    }
+
+    window.addEventListener("message", async function (event) {
+        console.log("LLEGO AL addEventListener");
+        if (event.origin === window.location.origin) {
+            console.log("PASO AL event.origin");
+            const {parameters3DS, error} = event.data;
+            if (parameters3DS) {
+                console.warn("Los parametros 3DS son :" + parameters3DS);
+                var token = Culqi.token.id;
+                var email = Culqi.token.email;
+                console.log("LOS PARAMETROS 3DS SON: "+parameters3DS)
+
+                var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+                  var data_fraud = {
+                   phone_number: "961778965",
+                   device_finger_print_id: window.device
+                  }
+                  var data = {
+                    amount : "10000",
+                    currency_code : "PEN",
+                    email : "jordan.diaz3@culqi.com",
+                    source_id : Culqi.token.id,
+                    antifraud_details : data_fraud,
+                    authentication_3DS: parameters3DS
+                    };
+                    console.log("json");
+                    console.log(data);
+
+                $.ajax({
+                    url: "https://api.culqi.com/v2/charges",
+                    data: JSON.stringify(data),
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    headers: {
+                    "Authorization": "Bearer sk_test_1573b0e8079863ff"
+                    },
+                    success: function (data, textStatus, xhr) {
+                        console.log('data:::', data);
+                        var result = "";
+
+                        if (data.constructor == String) {
+                            result = JSON.parse(data);
+                        }
+                        if (data.constructor == Object) {
+                            result = JSON.parse(JSON.stringify(data));
+                        }
+                        if (result.object === 'charge') {
+                            console.log("Cargo con 3DS Existoso");
+                            window.AndroidInterfaceMessage.onCulqiMenssage();
+                            //location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
+                        }
+                        if (result.object === 'error') {
+                            console.log("Ocurrio un Error al procesar 3DS");
+                            window.AndroidInterfaceMessageError.onCulqiMenssageError();
+                            window.AndroidInterface.onCulqiClose();
+                            Culqi.close();
+                        }
+
+                    },
+                    error: function (error, textStatus, xhr) {
+                        showResult('red', error['user_message']);
+                        $('#showresult').show();
+                        console.log('error:::', error);
+                        e.preventDefault();
+                    },
+                    beforeSend: function () {
+                        //run_waitMe();
+                    }
+                });
+            }
+
 
         }
+    }, false);
 
-        const message = `Se ha creado el objeto Order: ${order}. Recordar que hasta este`;
-        console.log('message ~> ', message);
-        // alert(message);
-        // Culqi.close();
-      } else {
-        console.log(Culqi.error.user_message);
-      }
-    };
+    //Culqi.open();
+
+
 
     closeCheckout = function () {
       console.log('se cerró el checkout... ');
       window.AndroidInterface.onCulqiClose();
     }
 
-    Culqi.open();
+
   </script>
 </body>
 </html>

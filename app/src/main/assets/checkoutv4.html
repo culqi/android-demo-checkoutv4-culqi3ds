@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://checkout.culqi.com/js/v4"></script>
     <script src="https://3ds.culqi.com" defer></script>
-    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.plugin.js" type="text/javascript"></script>-->
     <script src="jquery.min.js"></script>
 
 </head>
@@ -17,12 +15,9 @@
 
 <script  type="module" >
     Culqi3DS.publicKey = "pk_test_90667d0a57d45c48";
+    Culqi.publicKey = 'pk_test_90667d0a57d45c48';
+
     var json =  "JSON.parse(Android.sendParamsCheckoutv4FromAndroid());"
-
-	Culqi.publicKey = 'pk_test_90667d0a57d45c48';
-
-
-
 
     Culqi.settings({
       title: json.title,
@@ -77,7 +72,6 @@
 
 
     function culqi() {
-    console.log("Entro a 3DS");
           if (Culqi.token) {
             Culqi.close();
             console.log("El token es: "+ Culqi.token.id);
@@ -98,7 +92,7 @@
 
     function generateChargeImpl (tokenId,  email, parameters3DS = null) {
     //const deviceId = await Culqi3DS.generateDevice();
-    //console.log("JORDANNNNNNN " +deviceId);
+
     console.log("Llego a generateChargeImpl");
       var data_fraud = {
        phone_number: "961778965",
@@ -115,7 +109,7 @@
         console.log(data);
 
         //Llamado al endpoint de culqi/generateCharge
-
+        //recuerda que no debe usar tu sk en este proyecto, para ello crear un backend y consumo los servicios de Culqi
         $.ajax({
                 url: "https://api.culqi.com/v2/charges",
                 data: JSON.stringify(data),
@@ -225,9 +219,6 @@
 
         }
     }, false);
-
-    //Culqi.open();
-
 
 
     closeCheckout = function () {

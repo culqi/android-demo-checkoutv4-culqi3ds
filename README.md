@@ -1,6 +1,6 @@
 # DEMO - Culqi Android + Checkout V4 + Culqi 3DS
 
-La demo integra Culqi Android, Checkout V4 , Culqi 3DS y es compatible con la v2.0 del Culqi API, con esta demo podrás generar cargos y ordenes
+La demo integra Culqi Android, Checkout V4 , Culqi 3DS y es compatible con la v2.0 del Culqi API, con esta demo podrás generar cargos y ordenes.
 
 ## Requisitos
 
@@ -17,15 +17,14 @@ La demo integra Culqi Android, Checkout V4 , Culqi 3DS y es compatible con la v2
 
 ## Configuración
 
-Dentro de la carpeta assets encontraras un archivo con el nombre checkoutv4.html donde modificaremos las siguientes lineas
+Dentro de la carpeta assets encontraras un archivo con el nombre checkoutv4.html donde modificaremos las siguientes lineas:
 
 ```html
  Culqi3DS.publicKey = "pk_test_90667d0a57d45c48";
  Culqi.publicKey = 'pk_test_90667d0a57d45c48';
 ```
 
-Ahi colocaremos nuestras pk para configurar tanto el checkout como el 3ds, luego modificaremos la siguiente lineas para poder realizar
-cargos y ordenes
+En dichas lineas estamos asignando nuestra pk tanto a la configuración del checkout asi como a la configuración de 3ds, luego modificaremos la siguiente lineas para poder realizar cargos y ordenes
 
 ```javacript
  headers: {
@@ -33,30 +32,30 @@ cargos y ordenes
                 },
 ```
 
-Luego de hacer las modificaciones en el archivo checkoutv4.html subimos este archivo junto con el archivo jquery.min.js el nuestro webhosting
-, cuando terminemos de subir los archivos deberemos tener una ruta parecida a esta
+Luego debemos cargar el checkoutv4.html y el archivo jquery.min.js a nuestro webhosting.
+Subido los archivos deberemos tener una ruta parecida a la siguiente:
 
-https://test.000webhostapp.com/checkoutv4.html
+https://{tudominio}/checkoutv4.html
 
 Luego en el archivo MainActivity colocamos esa ruta en la siguiente parte de codigo
 
 
 ```kotlin
-browser.loadUrl("https://test.000webhostapp.com/checkoutv4.html")
+browser.loadUrl("https://{tudominio}/checkoutv4.html")
 ```
 
-Tambien remaplazamos esa url en el el archivo checkoutv4.html
+Tambien remaplazamos esa url en el archivo checkoutv4.html, esto es necesario para una correcta configuración de Culqi 3DS.
 
 ```javascript
-returnUrl: "https://test.000webhostapp.com/checkoutv4.html"
+returnUrl: "https://{tudominio}/checkoutv4.html"
 ```
 
 
 ## Inicializar la demo
 
-Para inicializar la demo en AndroidStudio primero debe selecciona el emulador o celular donde levantara la aplicacion y darle en el boton run.
+Para inicializar la demo en AndroidStudio primero debemos seleccionar el emulador o celular donde se levantará la aplicación y pulsar el botón run.
 
 
 ## Probar la demo
 
-Para poder visualizar la demo puede generar un apk llendo al menu Build/Build Bundle(s)/APK(s) y generarlo para luego poder instalarlo en algun emulador o dispositivo celular.
+Para poder visualizar la demo debemos generar un apk desde el menu Build/Build Bundle(s)/APK(s) de AndroidStudio, luego proceder a instalarlo en algun emulador o dispositivo celular.

@@ -24,6 +24,13 @@ Dentro de la carpeta assets encontraras un archivo con el nombre checkoutv4.html
  Culqi.publicKey = 'pk_test_90667d0a57d45c48';
 ```
 
+Tambien se debe cambiar la url del backend ya que por temas de pruebas se uso el backend que tiene culqi
+
+ 
+```javacript
+ url: "https://api.culqi.com/v2/charges"
+```
+
 En dichas lineas estamos asignando nuestra pk tanto a la configuración del checkout asi como a la configuración de 3ds, luego modificaremos la siguiente lineas para poder realizar cargos y ordenes
 
 ```javacript

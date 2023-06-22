@@ -97,17 +97,16 @@
     window.culqi = culqi;
 
     function generateChargeImpl (tokenId,  email, parameters3DS = null) {
-    //const deviceId = await Culqi3DS.generateDevice();
-    //console.log("JORDANNNNNNN " +deviceId);
-    console.log("Llego a generateChargeImpl");
       var data_fraud = {
-       phone_number: "961778965",
+       first_name: json.first_name,
+       last_name: json.last_name,
+       phone_number: json.phone_number,
        device_finger_print_id: window.device
       }
       var data = {
-        amount : "10000",
-        currency_code : "PEN",
-        email : "jordan.diaz3@culqi.com",
+        amount : json.amount,
+        currency_code : json.currency_code,
+        email : Culqi.token.email,
         source_id : Culqi.token.id,
         antifraud_details : data_fraud
         };
@@ -164,13 +163,15 @@
 
                 var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
                   var data_fraud = {
-                   phone_number: "961778965",
+                   first_name: json.first_name,
+                   last_name: json.last_name,
+                   phone_number: json.phone_number,
                    device_finger_print_id: window.device
                   }
                   var data = {
-                    amount : "10000",
-                    currency_code : "PEN",
-                    email : "jordan.diaz3@culqi.com",
+                    amount : json.amount,
+                    currency_code : json.currency_code,
+                    email : Culqi.token.email,
                     source_id : Culqi.token.id,
                     antifraud_details : data_fraud,
                     authentication_3DS: parameters3DS

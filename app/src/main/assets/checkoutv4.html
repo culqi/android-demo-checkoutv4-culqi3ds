@@ -112,7 +112,7 @@
         console.log(data);
 
         //Llamado al endpoint de culqi/generateCharge
-
+        //No debes usar tu llave privada(sk) en tu integración, en su lugar desarrolla un backend para esto
         $.ajax({
                 url: "https://api.culqi.com/v2/charges",
                 data: JSON.stringify(data),

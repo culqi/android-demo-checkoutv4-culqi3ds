@@ -88,6 +88,7 @@
     window.culqi = culqi;
 
     function generateChargeImpl (tokenId,  email, parameters3DS = null) {
+	  var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
       var data_fraud = {
        first_name: json.first_name,
        last_name: json.last_name,
@@ -99,13 +100,19 @@
         currency_code : json.currency_code,
         email : Culqi.token.email,
         source_id : Culqi.token.id,
-        antifraud_details : data_fraud
+		installments : installments,
+        antifraud_details : data_fraud,
+        authentication_3DS: parameters3DS
         };
+
+        if (data.authentication_3DS == null || data.authentication_3DS == ''){
+            delete data.authentication_3DS;
+        }
         console.log("json");
         console.log(data);
 
         //Llamado al endpoint de culqi/generateCharge
-        //recuerda que no debes usar tu sk en este proyecto, para ello debes crear un backend y consumir los servicios de Culqi
+
         $.ajax({
                 url: "https://api.culqi.com/v2/charges",
                 data: JSON.stringify(data),
@@ -129,58 +136,6 @@
                         };
                         Culqi3DS.initAuthentication(Culqi.token.id);
                     } else {
-                        console.log("Se Realizo el Cargo correctamente sin 3DS");
-                    }
-                },
-                error: function (error, textStatus, xhr) {
-                    console.log('error:::', error);
-                    window.AndroidInterface.onCulqiClose();
-                    Culqi.close();
-                }
-            });
-
-    }
-
-    window.addEventListener("message", async function (event) {
-        console.log("LLEGO AL addEventListener");
-        if (event.origin === window.location.origin) {
-            console.log("PASO AL event.origin");
-            const {parameters3DS, error} = event.data;
-            if (parameters3DS) {
-                console.warn("Los parametros 3DS son :" + parameters3DS);
-                var token = Culqi.token.id;
-                var email = Culqi.token.email;
-                console.log("LOS PARAMETROS 3DS SON: "+parameters3DS)
-
-                var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
-                  var data_fraud = {
-                   first_name: json.first_name,
-                   last_name: json.last_name,
-                   phone_number: json.phone_number,
-                   device_finger_print_id: window.device
-                  }
-                  var data = {
-                    amount : json.amount,
-                    currency_code : json.currency_code,
-                    email : Culqi.token.email,
-                    source_id : Culqi.token.id,
-                    antifraud_details : data_fraud,
-                    authentication_3DS: parameters3DS
-                    };
-                    console.log("json");
-                    console.log(data);
-
-                $.ajax({
-                    url: "https://api.culqi.com/v2/charges",
-                    data: JSON.stringify(data),
-                    type: "POST",
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    headers: {
-                    "Authorization": "Bearer sk_test_1573b0e8079863ff"
-                    },
-                    success: function (data, textStatus, xhr) {
-                        console.log('data:::', data);
                         var result = "";
 
                         if (data.constructor == String) {
@@ -200,25 +155,42 @@
                             window.AndroidInterface.onCulqiClose();
                             Culqi.close();
                         }
-
-                    },
-                    error: function (error, textStatus, xhr) {
-                        showResult('red', error['user_message']);
-                        $('#showresult').show();
-                        console.log('error:::', error);
-                        e.preventDefault();
-                    },
-                    beforeSend: function () {
-                        //run_waitMe();
                     }
-                });
+                },
+                error: function (error, textStatus, xhr) {
+                    console.log('error:::', error);
+                    window.AndroidInterface.onCulqiClose();
+                    Culqi.close();
+                },
+				beforeSend: function () {
+                        //run_waitMe();
+                }
+            });
+
+    }
+
+    window.addEventListener("message", async function (event) {
+        console.log("LLEGO AL addEventListener");
+        if (event.origin === window.location.origin) {
+            console.log("PASO AL event.origin");
+            const {parameters3DS, error} = event.data;
+            if (parameters3DS) {
+                console.warn("Los parametros 3DS son :" + parameters3DS);
+                var token = Culqi.token.id;
+                var email = Culqi.token.email;
+                console.log("LOS PARAMETROS 3DS SON: "+parameters3DS)
+
+				generateChargeImpl (token,  email, parameters3DS);
+                  
             }
 
 
         }
     }, false);
 
-    Culqi.open();
+    //Culqi.open();
+
+
 
     closeCheckout = function () {
       console.log('se cerró el checkout... ');

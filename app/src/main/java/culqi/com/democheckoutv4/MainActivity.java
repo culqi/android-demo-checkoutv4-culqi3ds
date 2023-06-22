@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         WebView browser = new WebView( this ) ;
         browser.getSettings().setJavaScriptEnabled( true ) ;
         browser.setWebChromeClient(new WebChromeClient() {});
-        browser.loadUrl( "file:///android_asset/checkoutv4.html" ) ;
+        //browser.loadUrl( "file:///android_asset/checkoutv4.html" ) ;
+        browser.loadUrl("https://jordandiaz1988.000webhostapp.com/checkoutv6.html");
         setContentView(browser) ;
         WebSettings ws = browser.getSettings() ;
         ws.setJavaScriptEnabled( true ) ;
@@ -213,6 +214,10 @@ public class MainActivity extends AppCompatActivity {
             sdc.setTitle("Tienda Android");
             sdc.setAmount("10000");//100.00
             sdc.setOrderId("ord_test_bYPt8MUjbla9SVm6");
+            sdc.setPhone_number("956944598");
+            sdc.setCurrency_code("PEN");
+            sdc.setFirst_name("Fernando");
+            sdc.setLast_name("Peres Diaz");
 /*
             String response = getOrder();
             JSONObject jsonResponse = new JSONObject(response);

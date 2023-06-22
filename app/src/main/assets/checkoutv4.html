@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://checkout.culqi.com/js/v4"></script>
     <script src="https://3ds.culqi.com" defer></script>
-    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.plugin.js" type="text/javascript"></script>-->
     <script src="jquery.min.js"></script>
 
 </head>
@@ -17,12 +15,9 @@
 
 <script  type="module" >
     Culqi3DS.publicKey = "pk_test_90667d0a57d45c48";
-    var json =  "JSON.parse(Android.sendParamsCheckoutv4FromAndroid());"
+    Culqi.publicKey = 'pk_test_90667d0a57d45c48';
 
-	Culqi.publicKey = 'pk_test_90667d0a57d45c48';
-
-
-
+    var json =  JSON.parse(Android.sendParamsCheckoutv4FromAndroid());
 
     Culqi.settings({
       title: json.title,
@@ -47,7 +42,7 @@
         buttonBackground: '', // hexadecimal
         menuColor: '', // hexadecimal
         linksColor: '', // hexadecimal
-        buttonText: "Donar",
+        buttonText: "Pagar",
 
         priceColor: '',
         //logo: 'https://avatars.githubusercontent.com/u/13783771?s=280&v=4'
@@ -74,10 +69,7 @@
                 Culqi.open();
             });
 
-
-
     function culqi() {
-    console.log("Entro a 3DS");
           if (Culqi.token) {
             Culqi.close();
             console.log("El token es: "+ Culqi.token.id);
@@ -114,7 +106,7 @@
         console.log(data);
 
         //Llamado al endpoint de culqi/generateCharge
-
+        //recuerda que no debes usar tu sk en este proyecto, para ello debes crear un backend y consumir los servicios de Culqi
         $.ajax({
                 url: "https://api.culqi.com/v2/charges",
                 data: JSON.stringify(data),
@@ -227,9 +219,7 @@
         }
     }, false);
 
-    //Culqi.open();
-
-
+    Culqi.open();
 
     closeCheckout = function () {
       console.log('se cerró el checkout... ');

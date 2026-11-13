@@ -18,6 +18,27 @@ La demo integra Culqi Android, Checkout V4 , Culqi 3DS y es compatible con la v2
 
 ## Configuración
 
+### Configurar las pruebas y ejemplos
+
+El código y su historial usan `INSERTE_SU_LLAVE_PUBLICA` e
+`INSERTE_SU_LLAVE_PRIVADA` en lugar de credenciales de ejemplo. Obtén tus
+propias llaves de prueba (`pk_test_` y `sk_test_`) desde CulqiPanel y no
+hagas commit de ninguna llave.
+
+Configura tu llave pública de prueba en `Culqi.publicKey` y
+`Culqi3DS.publicKey`, dentro de `app/src/main/assets/checkoutv4.html`.
+Las cabeceras con `INSERTE_SU_LLAVE_PRIVADA` en ese archivo y en
+`app/src/main/java/culqi/com/democheckoutv4/MainActivity.java` son ejemplos
+ilustrativos: no reemplaces ese placeholder por una llave privada en el
+HTML ni en el APK, tampoco si es de prueba. Implementa los cargos y las
+órdenes en tu backend, guarda allí tu llave privada y adapta la demo para
+consumir ese backend.
+
+Antes de ejecutar, configura también tu hosting, `browser.loadUrl` y
+`returnUrl` con tu propia URL. La demo hace llamadas reales a la API de
+Culqi; usa solo credenciales y datos de prueba. Con los placeholders no
+se pueden autenticar solicitudes.
+
 Dentro de la carpeta assets encontraras un archivo con el nombre checkoutv4.html donde modificaremos las siguientes lineas:
 
 ```html
@@ -25,7 +46,7 @@ Dentro de la carpeta assets encontraras un archivo con el nombre checkoutv4.html
  Culqi.publicKey = 'INSERTE_SU_LLAVE_PUBLICA';
 ```
 
-En dichas lineas estamos asignando nuestra llave pública(pk), tanto a la configuración del checkoutv4 asi como a la del Culqi 3DS, luego modificaremos la siguiente lineas  realizar cargos y órdenes
+En dichas lineas estamos asignando nuestra llave pública(pk), tanto a la configuración del checkoutv4 asi como a la del Culqi 3DS. La siguiente cabecera ilustra la autenticación para cargos y órdenes y debe implementarse únicamente en tu backend:
 
 > Importante: No debes colocar tu llave privada(sk) dentro de tu proyecto front.
 
@@ -63,5 +84,5 @@ Para poder visualizar la demo debemos generar un apk desde el menu Build/Build B
 
 ## Importante para producción
 
-No debes configurar tu llave privada(sk) dentro del proyecto, para efectos de pruebas en está demo se colocó la sk en el archivo checkoutv4.html, pero tu sk debe estar protegido.
+No debes configurar tu llave privada(sk) dentro del proyecto. Los ejemplos de autenticación en HTML y Java contienen únicamente un placeholder; tu llave privada debe permanecer protegida en el backend.
 Para ello debes desarrollar un backend para el proyecto, el cual hará uso de tu sk y consumirá los servicio de [cargos](https://apidocs.culqi.com/#tag/Cargos/operation/crear-cargo) y [órdenes](https://apidocs.culqi.com/#tag/Ordenes/operation/crear-orden) de Culqi, posteriomente este bakend debe ser consumido desde tu aplicación android.
